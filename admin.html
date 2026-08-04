@@ -1,5 +1,13 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Login - Austin Services</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="./service.css"></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - Austin Services</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="./service.css">
+</head>
+<body>
 <header><div class="container nav"><div class="brand">ADMIN PANEL</div><a href="index.html">← Back to Site</a></div></header>
 
 <main class="service-container">
@@ -25,8 +33,26 @@
   </div>
 </main>
 
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
 <script>
 const ADMIN_PASSWORD = "Austin@123456"; // <-- CHANGE THIS TO YOUR PASSWORD
+
+// 1. YOUR FIREBASE CONFIG - paste same config from contact.html
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 
 function login(){
   let pass = document.getElementById('adminPass').value;
@@ -49,27 +75,45 @@ function showDashboard(){
   loadRequests();
 }
 
+// 2. LOAD REQUESTS FROM FIREBASE IN REAL TIME
 function loadRequests(){
-  let requests = JSON.parse(localStorage.getItem('austinRequests') || '[]');
-  let list = document.getElementById('requestsList');
-  if(requests.length === 0){ 
-    list.innerHTML = '<div class="service-box"><p>No requests yet.</p></div>'; 
-    return; 
+  db.ref("messages").orderByChild("time").on("value", (snapshot) => {
+    let list = document.getElementById('requestsList');
+    list.innerHTML = '';
+    
+    if(!snapshot.exists()){ 
+      list.innerHTML = '<div class="service-box"><p>No requests yet.</p></div>'; 
+      return; 
+    }
+
+    // Loop through all messages
+    snapshot.forEach((childSnapshot) => {
+      const r = childSnapshot.val();
+      const id = childSnapshot.key;
+      
+      list.innerHTML = `
+        <div class="service-box">
+          <h3>${r.subject}</h3>
+          <p><b>Time:</b> ${new Date(r.time).toLocaleString()}</p>
+          <p><b>Name:</b> ${r.name}</p>
+          <p><b>Phone:</b> ${r.phone}</p>
+          <p><b>Message:</b> ${r.message}</p>
+          <button onclick="deleteMsg('${id}')" style="background:red;color:#fff;border:0;padding:5px 10px;border-radius:5px">Delete</button>
+        </div>
+      ` + list.innerHTML; // newest on top
+    });
+  });
+}
+
+function deleteMsg(id){
+  if(confirm('Delete this request?')){
+    db.ref("messages/" + id).remove();
   }
-  
-  list.innerHTML = requests.reverse().map((r,i) => `
-    <div class="service-box">
-      <h3>${r.service}</h3>
-      <p><b>Time:</b> ${r.time}</p>
-      ${Object.keys(r.details).map(key => `<p><b>${key}:</b> ${r.details[key]}</p>`).join('')}
-    </div>
-  `).join('');
 }
 
 function clearAll(){
-  if(confirm('Delete all requests?')){
-    localStorage.removeItem('austinRequests');
-    loadRequests();
+  if(confirm('Delete ALL requests?')){
+    db.ref("messages").remove();
   }
 }
 
