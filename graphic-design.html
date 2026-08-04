@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graphic Design - Austin Services</title><link rel="stylesheet" href="./css/style.css"><link rel="stylesheet" href="./css/service.css"></head><body>
+<header><div class="container nav"><div class="brand">AUSTIN SERVICES</div></div></header>
+<main class="service-container">
+  <div class="service-header"><h1>Graphic Design</h1><p>Logos, Flyers, Social Media</p></div>
+  <div class="service-box">
+    <h3>Request Quote</h3>
+    <div class="form-group"><label>Service Type</label><select id="service"><option value="10000">Logo Design - From ₦10,000</option><option value="5000">Flyer Design - From ₦5,000</option><option value="3000">Social Media Post - ₦3,000</option><option value="20000">Brand Package - ₦20,000</option></select></div>
+    <div class="form-group"><label>Number of Revisions</label><select id="rev"><option value="0">2 Revisions Included</option><option value="2000">+1 Extra Revision - ₦2,000</option></select></div>
+    <div class="form-group"><label>Brief Description</label><textarea id="brief" rows="3" placeholder="Tell us what you need..." style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px"></textarea></div>
+    <div class="quote-box"><p>Estimated Total</p><div class="total-price" id="total">₦10,000</div></div>
+  </div>
+  <div class="form-group"><label>Your Name</label><input type="text" id="custName" placeholder="Enter your name"></div>
+<div class="form-group"><label>Your Phone</label><input type="tel" id="custPhone" placeholder="080xxxxxxxx"></div>
+  <div class="btn-group"><button id="submitBtn" class="btn btn-whatsapp">Send Request to Admin</button><a href="index.html" class="btn btn-back">← Back Home</a></div>
+  <p id="successMsg" style="color:green;text-align:center;margin-top:10px;display:none">✓ Request sent! Admin will contact you soon.</p>
+</main>
+<script>
+function calc(){let price=parseInt(document.getElementById('service').value)+parseInt(document.getElementById('rev').value);document.getElementById('total').innerText='₦'+price}
+document.querySelectorAll('select, textarea').forEach(el=>el.oninput=calc);calc();
+document.getElementById('submitBtn').onclick=()=>{let reqs=JSON.parse(localStorage.getItem('austinRequests')||'[]');reqs.push({service:'Graphic Design',time:new Date().toLocaleString(),details:{service:document.getElementById('service').options[document.getElementById('service').selectedIndex].text,revision:document.getElementById('rev').options[document.getElementById('rev').selectedIndex].text,brief:document.getElementById('brief').value,total:document.getElementById('total').innerText}});localStorage.setItem('austinRequests',JSON.stringify(reqs));document.getElementById('successMsg').style.display='block';document.getElementById('submitBtn').innerText='Request Sent';document.getElementById('submitBtn').disabled=true;}
+</script></body></html>
