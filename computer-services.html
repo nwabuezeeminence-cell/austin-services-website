@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>General Computer Services - Austin Services</title><link rel="stylesheet" href="./css/style.css"><link rel="stylesheet" href="./css/service.css"></head><body>
+<header><div class="container nav"><div class="brand">AUSTIN SERVICES</div></div></header>
+<main class="service-container">
+  <div class="service-header"><h1>General Computer Services</h1><p>Typing, Forms, CV + Online Services</p></div>
+  <div class="service-box">
+    <h3>Calculate Your Price</h3>
+    <div class="form-group"><label>Service</label><select id="service"><option value="2000">CV Writing + Printing</option><option value="500">Form Filling</option><option value="200">Typing - per page</option><option value="1000">NIN/JAMB Registration</option></select></div>
+    <div class="form-group"><label>Number of Pages</label><input type="number" id="pages" value="1" min="1"></div>
+    <div class="quote-box"><p>Estimated Total</p><div class="total-price" id="total">₦2,000</div></div>
+  </div>
+  <div class="form-group"><label>Your Name</label><input type="text" id="custName" placeholder="Enter your name"></div>
+<div class="form-group"><label>Your Phone</label><input type="tel" id="custPhone" placeholder="080xxxxxxxx"></div>
+  <div class="btn-group"><button id="submitBtn" class="btn btn-whatsapp">Send Request to Admin</button><a href="index.html" class="btn btn-back">← Back Home</a></div>
+  <p id="successMsg" style="color:green;text-align:center;margin-top:10px;display:none">✓ Request sent! Admin will contact you soon.</p>
+</main>
+<script>
+function calc(){let base=parseInt(document.getElementById('service').value);let pages=document.getElementById('service').value==200?parseInt(document.getElementById('pages').value):1;let price=base*pages;document.getElementById('total').innerText='₦'+price}
+document.querySelectorAll('select, input').forEach(el=>el.oninput=calc);calc();
+document.getElementById('submitBtn').onclick=()=>{let reqs=JSON.parse(localStorage.getItem('austinRequests')||'[]');reqs.push({service:'General Computer Services',time:new Date().toLocaleString(),details:{service:document.getElementById('service').options[document.getElementById('service').selectedIndex].text,pages:document.getElementById('pages').value,total:document.getElementById('total').innerText}});localStorage.setItem('austinRequests',JSON.stringify(reqs));document.getElementById('successMsg').style.display='block';document.getElementById('submitBtn').innerText='Request Sent';document.getElementById('submitBtn').disabled=true;}
+</script></body></html>
