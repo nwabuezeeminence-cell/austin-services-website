@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photocopy - Austin Services</title><link rel="stylesheet" href="./css/style.css"><link rel="stylesheet" href="./css/service.css"></head><body>
+<header><div class="container nav"><div class="brand">AUSTIN SERVICES</div></div></header>
+<main class="service-container">
+  <div class="service-header"><h1>Photocopy Service</h1><p>Get an instant quote</p></div>
+  <div class="service-box">
+    <h3>Calculate Your Price</h3>
+    <div class="form-group"><label>Type</label><select id="type"><option value="50">Black & White - ₦50/page</option><option value="150">Color - ₦150/page</option></select></div>
+    <div class="form-group"><label>Paper Size</label><select id="size"><option value="1">A4</option><option value="1.5">A3 - 1.5x Price</option></select></div>
+    <div class="form-group"><label>Number of Pages</label><input type="number" id="pages" value="1" min="1"></div>
+    <div class="quote-box"><p>Estimated Total</p><div class="total-price" id="total">₦50</div></div>
+  </div>
+  <div class="form-group"><label>Your Name</label><input type="text" id="custName" placeholder="Enter your name"></div>
+<div class="form-group"><label>Your Phone</label><input type="tel" id="custPhone" placeholder="080xxxxxxxx"></div>
+  <div class="btn-group"><button id="submitBtn" class="btn btn-whatsapp">Send Request to Admin</button><a href="index.html" class="btn btn-back">← Back Home</a></div>
+  <p id="successMsg" style="color:green;text-align:center;margin-top:10px;display:none">✓ Request sent! Admin will contact you soon.</p>
+</main>
+<script>
+function calc(){let price=document.getElementById('type').value*document.getElementById('size').value*document.getElementById('pages').value;document.getElementById('total').innerText='₦'+price}
+document.querySelectorAll('select, input').forEach(el=>el.oninput=calc);calc();
+document.getElementById('submitBtn').onclick=()=>{
+  let name = document.getElementById('custName').value.trim();
+  let phone = document.getElementById('custPhone').value.trim();
+  
+  if(name === '' || phone === ''){
+    alert('Please enter your Name and Phone Number');
+    return;
+  }
+
+  let reqs=JSON.parse(localStorage.getItem('austinRequests')||'[]');
+  reqs.push({
+    service:'Photocopy', // CHANGE THIS FOR EACH PAGE
+    time:new Date().toLocaleString(),
+    details:{
+      name: name,
+      phone: phone,
+      type:document.getElementById('type').options[document.getElementById('type').selectedIndex].text,
+      pages:document.getElementById('pages').value,
+      size:document.getElementById('size').options[document.getElementById('size').selectedIndex].text,
+      total:document.getElementById('total').innerText
+    }
+  });
+  localStorage.setItem('austinRequests',JSON.stringify(reqs));
+  document.getElementById('successMsg').style.display='block';
+  document.getElementById('submitBtn').innerText='Request Sent';
+  document.getElementById('submitBtn').disabled=true;
+disabled=true;}
+</script></body></html>
