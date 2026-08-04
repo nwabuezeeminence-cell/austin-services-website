@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - Austin Services</title><link rel="stylesheet" href="./css/style.css"><link rel="stylesheet" href="./css/service.css"></head><body>
+<header><div class="container nav"><div class="brand">ADMIN PANEL</div><a href="index.html">← Back to Site</a></div></header>
+
+<main class="service-container">
+  <!-- LOGIN FORM -->
+  <div id="loginBox" class="service-box" style="max-width:400px;margin:60px auto">
+    <h2 style="text-align:center">Admin Login</h2>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="adminPass" placeholder="Enter password">
+    </div>
+    <button onclick="login()" class="btn btn-whatsapp" style="width:100%">Login</button>
+    <p id="errorMsg" style="color:red;text-align:center;margin-top:10px;display:none">Wrong password!</p>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="dashboard" style="display:none">
+    <div class="service-header">
+      <h1>Customer Requests</h1>
+      <button onclick="logout()" style="background:#666;color:#fff;border:0;padding:8px 16px;border-radius:8px">Logout</button>
+      <button onclick="clearAll()" style="background:red;color:#fff;border:0;padding:8px 16px;border-radius:8px;margin-left:8px">Clear All</button>
+    </div>
+    <div id="requestsList"></div>
+  </div>
+</main>
+
+<script>
+const ADMIN_PASSWORD = "austin123"; // <-- CHANGE THIS TO YOUR PASSWORD
+
+function login(){
+  let pass = document.getElementById('adminPass').value;
+  if(pass === ADMIN_PASSWORD){
+    localStorage.setItem('austinAdminLoggedIn', 'true');
+    showDashboard();
+  } else {
+    document.getElementById('errorMsg').style.display = 'block';
+  }
+}
+
+function logout(){
+  localStorage.removeItem('austinAdminLoggedIn');
+  location.reload();
+}
+
+function showDashboard(){
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadRequests();
+}
+
+function loadRequests(){
+  let requests = JSON.parse(localStorage.getItem('austinRequests') || '[]');
+  let list = document.getElementById('requestsList');
+  if(requests.length === 0){ 
+    list.innerHTML = '<div class="service-box"><p>No requests yet.</p></div>'; 
+    return; 
+  }
+  
+  list.innerHTML = requests.reverse().map((r,i) => `
+    <div class="service-box">
+      <h3>${r.service}</h3>
+      <p><b>Time:</b> ${r.time}</p>
+      ${Object.keys(r.details).map(key => `<p><b>${key}:</b> ${r.details[key]}</p>`).join('')}
+    </div>
+  `).join('');
+}
+
+function clearAll(){
+  if(confirm('Delete all requests?')){
+    localStorage.removeItem('austinRequests');
+    loadRequests();
+  }
+}
+
+// Check if already logged in
+if(localStorage.getItem('austinAdminLoggedIn') === 'true'){
+  showDashboard();
+}
+
+// Allow Enter key to login
+document.getElementById('adminPass').addEventListener('keypress', function(e){
+  if(e.key === 'Enter') login();
+})
+</script></body></html>
